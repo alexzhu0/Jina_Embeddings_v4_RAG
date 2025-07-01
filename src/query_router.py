@@ -357,9 +357,7 @@ class QueryRouter:
     def _build_prompt(self, query: str, context: str, output_format: str) -> str:
         """构建API提示词 - 简化版原文提取"""
         format_instructions = {
-            "province_list": """请按照以下格式输出：
-省份：相关内容1、相关内容2、相关内容3...
-
+            "province_list": """
 要求：内容必须来自政府工作报告原文，不要编造""",
             
             "detailed": """请提供详细信息，要求：
