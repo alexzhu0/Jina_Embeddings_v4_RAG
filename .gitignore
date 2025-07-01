@@ -58,4 +58,7 @@ api_keys.txt
 
 # Large documents (user should add their own)
 documents/
-raw_data/ 
+raw_data/
+
+# Keep the provided data files
+!docs/31省区市政府工作报告.zip 
