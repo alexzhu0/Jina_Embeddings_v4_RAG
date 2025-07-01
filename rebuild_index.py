@@ -21,9 +21,9 @@ def rebuild_index():
         # 确保目录存在
         ensure_directories()
         
-        # 1. 检查当前embedding维度
+        # 1. 检查当前embedding维度 - 使用SDPA优化
         print("📏 检查embedding维度...")
-        embedding_manager = get_embedding_manager()
+        embedding_manager = get_embedding_manager(attn_implementation="sdpa")
         current_dim = embedding_manager.get_embedding_dimension()
         print(f"✅ 当前embedding维度: {current_dim}")
         

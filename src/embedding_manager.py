@@ -22,7 +22,8 @@ class JinaEmbeddingManager:
     """Jina Embeddings v4 模型管理器"""
     
     def __init__(self, model_name: str = "jinaai/jina-embeddings-v4", 
-                 cache_dir: str = None, device: str = None):
+                 cache_dir: str = None, device: str = None,
+                 attn_implementation: str = "sdpa"):
         """
         初始化Jina Embedding管理器
         
@@ -30,6 +31,7 @@ class JinaEmbeddingManager:
             model_name: 模型名称
             cache_dir: 缓存目录
             device: 设备类型 ('cuda', 'cpu', None自动选择)
+            attn_implementation: attention实现 ('sdpa', 'flash_attention_2', 'eager')
         """
         self.model_name = model_name
         
@@ -45,7 +47,9 @@ class JinaEmbeddingManager:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
         else:
             self.device = device
-            
+        
+        # 设置attention实现
+        self.attn_implementation = attn_implementation
         self.model = None
         
         logger.info(f"🚀 初始化Jina Embedding管理器")
@@ -54,27 +58,75 @@ class JinaEmbeddingManager:
             logger.info(f"🎮 GPU: {torch.cuda.get_device_name(0)}")
         logger.info(f"🔤 模型: {model_name}")
         logger.info(f"📁 缓存目录: {self.cache_dir}")
+        logger.info(f"⚡ Attention实现: {self.attn_implementation}")
     
     def download_and_load_model(self) -> bool:
         """
-        下载并加载模型
+        下载并加载模型 - 支持SDPA优化
         
         Returns:
             bool: 是否成功加载
         """
         try:
             logger.info(f"📥 开始加载模型: {self.model_name}")
+            logger.info(f"⚡ 尝试使用 {self.attn_implementation} attention")
             
-            # 设置环境变量强制禁用FlashAttention
-            os.environ['FLASH_ATTENTION_FORCE_DISABLE'] = '1'
+            # 移除强制禁用FlashAttention的环境变量
+            if 'FLASH_ATTENTION_FORCE_DISABLE' in os.environ:
+                del os.environ['FLASH_ATTENTION_FORCE_DISABLE']
             
-            # 使用官方推荐的方式加载模型
-            self.model = AutoModel.from_pretrained(
-                self.model_name,
-                trust_remote_code=True,
-                cache_dir=self.cache_dir,
-                attn_implementation="eager"  # 强制使用eager attention
-            )
+            # 尝试使用指定的attention实现
+            try:
+                self.model = AutoModel.from_pretrained(
+                    self.model_name,
+                    trust_remote_code=True,
+                    cache_dir=self.cache_dir,
+                    attn_implementation=self.attn_implementation
+                )
+                logger.info(f"✅ 成功使用 {self.attn_implementation} attention")
+                
+            except Exception as attn_error:
+                logger.warning(f"⚠️ {self.attn_implementation} attention 加载失败: {attn_error}")
+                
+                # 自动降级到SDPA
+                if self.attn_implementation == "flash_attention_2":
+                    logger.info("🔄 降级到 SDPA attention")
+                    try:
+                        self.model = AutoModel.from_pretrained(
+                            self.model_name,
+                            trust_remote_code=True,
+                            cache_dir=self.cache_dir,
+                            attn_implementation="sdpa"
+                        )
+                        self.attn_implementation = "sdpa"
+                        logger.info("✅ 成功使用 SDPA attention")
+                        
+                    except Exception as sdpa_error:
+                        logger.warning(f"⚠️ SDPA attention 也失败: {sdpa_error}")
+                        logger.info("🔄 最终降级到 eager attention")
+                        self.model = AutoModel.from_pretrained(
+                            self.model_name,
+                            trust_remote_code=True,
+                            cache_dir=self.cache_dir,
+                            attn_implementation="eager"
+                        )
+                        self.attn_implementation = "eager"
+                        logger.info("✅ 使用 eager attention (标准实现)")
+                
+                # 如果SDPA失败，降级到eager
+                elif self.attn_implementation == "sdpa":
+                    logger.info("🔄 降级到 eager attention")
+                    self.model = AutoModel.from_pretrained(
+                        self.model_name,
+                        trust_remote_code=True,
+                        cache_dir=self.cache_dir,
+                        attn_implementation="eager"
+                    )
+                    self.attn_implementation = "eager"
+                    logger.info("✅ 使用 eager attention (标准实现)")
+                
+                else:
+                    raise attn_error
             
             # 移动到指定设备
             self.model = self.model.to(self.device)
@@ -82,6 +134,7 @@ class JinaEmbeddingManager:
             
             logger.info(f"✅ 模型加载成功！")
             logger.info(f"📊 模型参数量: {sum(p.numel() for p in self.model.parameters()):,}")
+            logger.info(f"⚡ 最终使用的attention: {self.attn_implementation}")
             
             return True
             
@@ -283,15 +336,20 @@ class JinaEmbeddingManager:
             "embedding_dimension": self.get_embedding_dimension()
         }
 
-def get_embedding_manager() -> JinaEmbeddingManager:
+def get_embedding_manager(attn_implementation: str = "sdpa") -> JinaEmbeddingManager:
     """
-    获取全局的embedding管理器实例
+    获取全局的embedding管理器实例 - 支持SDPA优化
+    
+    Args:
+        attn_implementation: attention实现 ('sdpa', 'flash_attention_2', 'eager')
     
     Returns:
         JinaEmbeddingManager: embedding管理器实例
     """
     if not hasattr(get_embedding_manager, '_instance'):
-        get_embedding_manager._instance = JinaEmbeddingManager()
+        get_embedding_manager._instance = JinaEmbeddingManager(
+            attn_implementation=attn_implementation
+        )
         
         # 自动加载模型
         if not get_embedding_manager._instance.download_and_load_model():

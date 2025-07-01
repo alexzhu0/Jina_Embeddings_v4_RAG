@@ -93,9 +93,9 @@ class VectorStore:
             return False
         
         try:
-            # 获取embedding管理器
+            # 获取embedding管理器 - 使用SDPA优化
             if embedding_manager is None:
-                embedding_manager = get_embedding_manager()
+                embedding_manager = get_embedding_manager(attn_implementation="sdpa")
             
             if not embedding_manager.is_model_loaded():
                 logger.error("❌ Embedding模型未加载")
@@ -235,8 +235,8 @@ class VectorStore:
             return []
         
         try:
-            # 编码查询文本
-            embedding_manager = get_embedding_manager()
+            # 编码查询文本 - 使用SDPA优化
+            embedding_manager = get_embedding_manager(attn_implementation="sdpa")
             query_embedding = embedding_manager.encode_texts([query], show_progress=False)
             
             if len(query_embedding) == 0:
@@ -350,13 +350,13 @@ class VectorStore:
 _vector_store = None
 
 def get_vector_store() -> VectorStore:
-    """获取全局向量存储实例"""
+    """获取全局向量存储实例 - 使用SDPA优化"""
     global _vector_store
     if _vector_store is None:
         from config.config import DATA_PATHS
         
-        # 获取embedding维度
-        embedding_manager = get_embedding_manager()
+        # 获取embedding维度 - 使用SDPA优化
+        embedding_manager = get_embedding_manager(attn_implementation="sdpa")
         embedding_dim = embedding_manager.get_embedding_dimension()
         
         _vector_store = VectorStore(
