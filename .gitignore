@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Configuration files with sensitive data
+config/config.py
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific - Data files
+data/processed/
+data/vectors/
+*.json
+*.pkl
+*.cache
+
+# Model files (too large for GitHub)
+models/jina-embeddings-v4/models--jinaai--jina-embeddings-v4/blobs/
+models/jina-embeddings-v4/models--jinaai--jina-embeddings-v4/snapshots/
+models/flashattention2/
+*.whl
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Temporary files
+temp/
+temp_*/
+*.tmp
+
+# API keys and secrets
+.env
+.env.local
+*.key
+api_keys.txt
+
+# Large documents (user should add their own)
+documents/
+raw_data/ 

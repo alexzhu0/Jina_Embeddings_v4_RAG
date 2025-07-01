@@ -1,0 +1,22 @@
+python-docx==0.8.11
+faiss-cpu==1.7.4
+transformers>=4.52.0
+torch>=2.5.0
+numpy==1.24.3
+pandas==2.0.3
+requests==2.31.0
+python-dotenv==1.0.0
+tqdm==4.66.1
+scikit-learn==1.3.2
+jieba==0.42.1
+openai==1.3.8
+# Jina Embeddings v4 官方依赖
+peft>=0.15.2
+torchvision
+pillow
+# Sentence Transformers 接口
+sentence-transformers>=3.0.0
+# 可选依赖
+accelerate>=0.20.0
+# FlashAttention2支持 (可选，Windows环境可能需要预编译包，如果你只是想快速在 Windows 上运行模型并获得不错的加速效果，或者不想改变现有工作流，那么直接使用 PyTorch 2.x 的 attn_implementation="sdpa" 是最简单、最直接且效果显著的方法。)
+# flash-attn>=2.0.0 
