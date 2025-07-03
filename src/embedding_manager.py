@@ -81,7 +81,8 @@ class JinaEmbeddingManager:
                     self.model_name,
                     trust_remote_code=True,
                     cache_dir=self.cache_dir,
-                    attn_implementation=self.attn_implementation
+                    attn_implementation=self.attn_implementation,
+                    local_files_only=True  # 强制只使用本地文件，不从网络下载
                 )
                 logger.info(f"✅ 成功使用 {self.attn_implementation} attention")
                 
@@ -96,7 +97,8 @@ class JinaEmbeddingManager:
                             self.model_name,
                             trust_remote_code=True,
                             cache_dir=self.cache_dir,
-                            attn_implementation="sdpa"
+                            attn_implementation="sdpa",
+                            local_files_only=True  # 强制只使用本地文件
                         )
                         self.attn_implementation = "sdpa"
                         logger.info("✅ 成功使用 SDPA attention")
@@ -108,7 +110,8 @@ class JinaEmbeddingManager:
                             self.model_name,
                             trust_remote_code=True,
                             cache_dir=self.cache_dir,
-                            attn_implementation="eager"
+                            attn_implementation="eager",
+                            local_files_only=True  # 强制只使用本地文件
                         )
                         self.attn_implementation = "eager"
                         logger.info("✅ 使用 eager attention (标准实现)")
@@ -120,7 +123,8 @@ class JinaEmbeddingManager:
                         self.model_name,
                         trust_remote_code=True,
                         cache_dir=self.cache_dir,
-                        attn_implementation="eager"
+                        attn_implementation="eager",
+                        local_files_only=True  # 强制只使用本地文件
                     )
                     self.attn_implementation = "eager"
                     logger.info("✅ 使用 eager attention (标准实现)")
