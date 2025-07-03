@@ -64,7 +64,7 @@
 │   ├── 智能文本分块和预处理
 │   └── 省份识别和分类
 ├── 向量化存储层
-│   ├── Jina Embeddings v4 (本地部署，支持FlashAttention2+SDPA双重优化)
+│   ├── Jina Embeddings v4 (本地部署，支持FlashAttention2+SDPA双重优化，强制使用本地模型)
 │   ├── FAISS向量数据库（增强搜索能力）
 │   └── 语义检索引擎（支持大量检索，内存高效）
 ├── 智能查询层
@@ -104,6 +104,7 @@
 - **优化截断算法**：保留信息密度最高的内容
 - **强化Prompt工程**：确保输出详细完整的数据
 - **长上下文支持**：充分利用100K字符的上下文窗口
+- **本地模型优化**：强制使用本地模型文件，避免网络下载，提升启动速度
 
 ## 📁 数据说明
 
@@ -325,10 +326,12 @@ python main.py
 ```
 
 首次运行会自动：
-1. 下载Jina Embeddings v4模型（约7GB）
-2. 处理Word文档并分块
-3. 构建FAISS向量索引
-4. 测试API连接
+1. 🔍 检测并加载本地Jina Embeddings v4模型（优先使用本地模型，避免网络下载）
+2. 📚 处理Word文档并分块
+3. 🔨 构建FAISS向量索引
+4. 🔗 测试API连接
+
+**注意**：系统已优化为优先使用本地模型文件，如果models目录中已有完整的模型文件，将直接使用本地模型，无需网络下载。
 
 ## 📝 使用示例
 
@@ -515,10 +518,18 @@ grep "检索完成\|处理时间" logs/government_rag.log
    python -c "import psutil; print(f'可用内存: {psutil.virtual_memory().available / 1024**3:.1f}GB')"
    ```
 
-4. **模型下载失败**
+4. **模型加载失败**
    ```bash
-   # 重新下载模型
-   python -c "from src.embedding_manager import get_embedding_manager; get_embedding_manager().download_and_load_model()"
+   # 检查本地模型文件是否完整
+   ls -la models/jina-embeddings-v4/models--jinaai--jina-embeddings-v4/snapshots/
+   
+   # 如果本地模型文件损坏或缺失，可以重新下载
+   # 临时移除 local_files_only 参数进行下载
+   python -c "
+   from src.embedding_manager import JinaEmbeddingManager
+   manager = JinaEmbeddingManager()
+   manager.download_and_load_model()
+   "
    ```
 
 ### 性能优化建议
@@ -555,6 +566,7 @@ jieba==0.42.1            # 中文分词
 - ✅ **系统稳定性**：优化API超时、修复max_tokens限制
 - ✅ **代码清理**：删除所有测试代码，保持生产环境整洁
 - ✅ **文档完善**：更新README和优化总结报告
+- ✅ **本地模型优化**：强制使用本地模型文件，避免网络下载，提升系统启动速度
 
 ### v1.0.0
 - ✅ 基础RAG系统实现
