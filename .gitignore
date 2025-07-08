@@ -61,4 +61,9 @@ documents/
 raw_data/
 
 # Keep the provided data files
-!docs/31省区市政府工作报告.zip 
+!docs/31省区市政府工作报告.zip
+
+# API_KIT specific exclusions
+API_KIT/__pycache__/
+API_KIT/ngrok-v3-stable-windows-amd64/ngrok.exe
+API_KIT/*.log 

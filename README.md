@@ -76,8 +76,14 @@
 │   ├── 优化截断算法
 │   ├── 信息密度评分
 │   └── 详细格式化输出
-└── API交互层
-    └── 硅基流动 Tongyi-Zhiwen/QwenLong-L1-32B（长上下文）
+├── API交互层
+│   └── 硅基流动 Tongyi-Zhiwen/QwenLong-L1-32B（长上下文）
+└── RESTful API服务层 (API_KIT)
+    ├── FastAPI服务器 (跨域支持、健康检查)
+    ├── 智能查询接口 (POST /api/query)
+    ├── 系统状态接口 (GET /api/status)
+    ├── 系统初始化接口 (POST /api/setup)
+    └── 内网穿透支持 (ngrok集成)
 ```
 
 ## ✅ 功能特性
@@ -105,6 +111,7 @@
 - **强化Prompt工程**：确保输出详细完整的数据
 - **长上下文支持**：充分利用100K字符的上下文窗口
 - **本地模型优化**：强制使用本地模型文件，避免网络下载，提升启动速度
+- **RESTful API服务**：完整的HTTP接口支持，便于系统集成和前端调用
 
 ## 📁 数据说明
 
@@ -181,6 +188,58 @@ python main.py
 - **内存**：至少16GB（推荐32GB）
 - **硬盘空间**：至少20GB
 - **CUDA**：11.8+（用于GPU加速）
+
+## 🌐 API服务部署
+
+### 📋 API_KIT 简介
+
+本项目提供了完整的RESTful API服务模块（`API_KIT/`），支持通过HTTP接口调用RAG系统功能，方便前端应用、自动化工具和第三方系统集成。
+
+#### 🎯 主要功能
+- **智能查询接口**: 支持自然语言查询政府工作报告
+- **系统状态监控**: 实时获取系统运行状态和统计信息
+- **系统初始化**: 远程初始化和重建向量索引
+- **内网穿透**: 集成ngrok支持外网访问
+- **跨域支持**: 完整的CORS配置，支持前端调用
+
+#### 🚀 快速启动API服务
+
+```bash
+# 方式1: 一键启动（推荐）
+cd API_KIT
+start_all.bat  # 自动启动API服务和ngrok
+
+# 方式2: 手动启动
+conda activate GovRag
+cd API_KIT
+start_api.bat
+```
+
+#### 📡 API接口示例
+
+```bash
+# 查询接口
+curl -X POST "http://localhost:8000/api/query" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "河南省2025年重点工作有哪些"}'
+
+# 系统状态
+curl -X GET "http://localhost:8000/api/status"
+
+# 访问API文档
+# http://localhost:8000/docs
+```
+
+#### 📚 详细文档
+
+API服务的完整配置、部署和使用说明，请参考：
+**[API_KIT/README.md](API_KIT/README.md)** - 包含详细的：
+- 完整的API接口文档和示例
+- 多种启动方式和环境配置
+- 客户端调用示例（Python、JavaScript、cURL）
+- 内网穿透配置和使用
+- 安全配置和性能优化
+- 故障排除和开发指南
 
 ### ⚡ 高效注意力机制优化
 
@@ -399,6 +458,14 @@ government_report_rag/
 │   ├── query_router.py       # 查询路由（强化Prompt）
 │   ├── result_aggregator.py  # 结果聚合
 │   └── api_client.py         # API客户端（优化超时）
+├── API_KIT/                  # RESTful API服务模块
+│   ├── api_server.py         # FastAPI服务器
+│   ├── api_models.py         # API数据模型
+│   ├── start_all.bat         # 一键启动脚本
+│   ├── start_api.bat         # API启动脚本
+│   ├── start_ngrok.bat       # ngrok启动脚本
+│   ├── requirements_api.txt  # API依赖
+│   └── README.md             # API详细文档
 ├── data/
 │   ├── processed/            # 处理后的文档数据
 │   └── vectors/              # FAISS向量索引
