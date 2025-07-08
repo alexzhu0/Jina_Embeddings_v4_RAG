@@ -1,111 +1,111 @@
-# 🌐 政府工作报告RAG系统 API 服务
+# 🌐 Chinese Government Work Reports RAG System API Service
 
-## 📋 概述
+## 📋 Overview
 
-API_KIT 是政府工作报告RAG系统的RESTful API服务模块，提供标准化的HTTP接口，支持前端应用、自动化工具和第三方系统集成。
+API_KIT is the RESTful API service module for the Chinese Government Work Reports RAG system, providing standardized HTTP interfaces for frontend applications, automation tools, and third-party system integration.
 
-### 🎯 主要功能
-- **智能查询接口**: 支持自然语言查询政府工作报告
-- **系统状态监控**: 实时获取系统运行状态
-- **系统初始化**: 远程初始化和重建索引
-- **健康检查**: 服务可用性检测
-- **跨域支持**: 支持前端应用调用
-- **内网穿透**: 集成ngrok支持外网访问
+### 🎯 Main Features
+- **Intelligent Query Interface**: Support natural language queries of government work reports
+- **System Status Monitoring**: Real-time system operation status
+- **System Initialization**: Remote initialization and index rebuilding
+- **Health Checks**: Service availability detection
+- **CORS Support**: Support frontend application calls
+- **Tunneling**: Integrated ngrok for external access
 
-## 🏗️ 架构组件
+## 🏗️ Architecture Components
 
 ```
 API_KIT/
-├── api_server.py           # FastAPI服务器主程序
-├── api_models.py           # Pydantic数据模型定义
-├── requirements_api.txt    # API服务依赖
-├── start_all.bat          # 一键启动脚本（API+ngrok）
-├── start_api.bat          # API服务启动脚本
-├── start_ngrok.bat        # ngrok内网穿透启动脚本
-├── ngrok-v3-stable-windows-amd64/  # 内网穿透工具
+├── api_server.py           # FastAPI server main program
+├── api_models.py           # Pydantic data model definitions
+├── requirements_api.txt    # API service dependencies
+├── start_all.bat          # One-click startup script (API+ngrok)
+├── start_api.bat          # API service startup script
+├── start_ngrok.bat        # ngrok tunneling startup script
+├── ngrok-v3-stable-windows-amd64/  # Tunneling tool
 │   └── ngrok.exe
-└── README.md              # 本文档
+└── README.md              # This documentation
 ```
 
-## 🚀 快速启动
+## 🚀 Quick Start
 
-### 环境要求
+### Environment Requirements
 - **Python 3.10+**
-- **Conda环境**: 建议使用名为`GovRag`的conda环境
-- **依赖包**: 已安装主系统和API服务依赖
+- **Conda Environment**: Recommended to use conda environment named `GovRag`
+- **Dependencies**: Main system and API service dependencies installed
 
-### 1. 环境准备
+### 1. Environment Setup
 ```bash
-# 创建并激活conda环境
+# Create and activate conda environment
 conda create -n GovRag python=3.10
 conda activate GovRag
 
-# 安装主系统依赖
+# Install main system dependencies
 pip install -r ../requirements.txt
 
-# 安装API服务依赖
+# Install API service dependencies
 pip install -r requirements_api.txt
 ```
 
-### 2. 启动方式
+### 2. Startup Methods
 
-#### 方式1: 一键启动（推荐）
+#### Method 1: One-Click Start (Recommended)
 ```bash
-# Windows用户 - 一键启动API服务和ngrok
+# Windows users - One-click start API service and ngrok
 start_all.bat
 ```
 
-此脚本会自动：
-1. 启动API服务器（后台运行）
-2. 等待15秒让服务器启动
-3. 调用系统初始化API
-4. 启动ngrok内网穿透
+This script will automatically:
+1. Start API server (background)
+2. Wait 15 seconds for server startup
+3. Call system initialization API
+4. Start ngrok tunneling
 
-#### 方式2: 单独启动API服务
+#### Method 2: Start API Service Only
 ```bash
-# Windows用户
+# Windows users
 start_api.bat
 
-# 或手动启动
+# Or manual start
 conda activate GovRag
 cd ..
 uvicorn API_KIT.api_server:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-#### 方式3: 生产环境启动
+#### Method 3: Production Environment Start
 ```bash
 conda activate GovRag
 cd ..
 uvicorn API_KIT.api_server:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
-### 3. 访问API文档
-启动后访问以下地址：
-- **API文档**: http://localhost:8000/docs
-- **ReDoc文档**: http://localhost:8000/redoc
-- **OpenAPI规范**: http://localhost:8000/openapi.json
+### 3. Access API Documentation
+After startup, visit these addresses:
+- **API Documentation**: http://localhost:8000/docs
+- **ReDoc Documentation**: http://localhost:8000/redoc
+- **OpenAPI Specification**: http://localhost:8000/openapi.json
 
-## 📡 API接口文档
+## 📡 API Interface Documentation
 
-### 1. 智能查询接口
+### 1. Intelligent Query Interface
 **POST** `/api/query`
 
-查询政府工作报告内容，支持智能分析和多种查询类型。
+Query government work report content with intelligent analysis and multiple query types support.
 
-#### 请求参数
+#### Request Parameters
 ```json
 {
-  "query": "河南省2025年重点工作有哪些"
+  "query": "What are Henan Province's key work for 2025"
 }
 ```
 
-#### 响应示例
+#### Response Example
 ```json
 {
   "success": true,
   "data": {
-    "content": "河南省2025年重点工作包括：\n1. 经济发展：GDP增长目标6.5%...",
-    "provinces": ["河南"],
+    "content": "Henan Province's key work for 2025 includes:\n1. Economic Development: GDP growth target 6.5%...",
+    "provinces": ["Henan"],
     "query_type": "single_province",
     "output_format": "detailed",
     "processing_time": 2.34,
@@ -115,41 +115,41 @@ uvicorn API_KIT.api_server:app --host 0.0.0.0 --port 8000 --workers 4
       "successful_batches": 1
     }
   },
-  "message": "查询成功"
+  "message": "Query successful"
 }
 ```
 
-#### 智能查询类型
-系统会自动识别查询类型并采用相应的检索策略：
+#### Intelligent Query Types
+System automatically identifies query types and applies corresponding retrieval strategies:
 
-- **单省份查询**: "河南省的经济发展重点"
-  - 检索策略：深度检索单个省份（30个块）
-  - 输出格式：详细分析报告
+- **Single Province Query**: "Henan Province's economic development focus"
+  - Retrieval Strategy: Deep retrieval for single province (30 chunks)
+  - Output Format: Detailed analysis report
 
-- **多省份查询**: "对比广东和江苏的产业发展"
-  - 检索策略：多省份平衡检索（每省15个块）
-  - 输出格式：对比分析表格
+- **Multi-Province Query**: "Compare industrial development between Guangdong and Jiangsu"
+  - Retrieval Strategy: Balanced multi-province retrieval (15 chunks per province)
+  - Output Format: Comparative analysis table
 
-- **全省份查询**: "各省GDP增长目标"
-  - 检索策略：全局主题检索
-  - 输出格式：省份列表汇总
+- **All Provinces Query**: "GDP growth targets of each province"
+  - Retrieval Strategy: Global thematic retrieval
+  - Output Format: Province list summary
 
-- **统计查询**: "统计各省投资计划"
-  - 检索策略：统计分析检索
-  - 输出格式：统计汇总信息
+- **Statistical Query**: "Statistics of provincial investment plans"
+  - Retrieval Strategy: Statistical analysis retrieval
+  - Output Format: Statistical summary information
 
-#### 系统优化特性
-- **智能分层检索**: 根据查询类型自动选择最优检索策略
-- **相邻块聚合**: 确保上下文连续性和完整性
-- **上下文窗口最大化**: 支持最大100,000字符的上下文
-- **智能截断**: 保留高价值信息，优化输出长度
+#### System Optimization Features
+- **Intelligent Layered Retrieval**: Automatically select optimal retrieval strategy based on query type
+- **Adjacent Chunk Aggregation**: Ensure context continuity and completeness
+- **Context Window Maximization**: Support maximum 100,000 character context
+- **Intelligent Truncation**: Preserve high-value information, optimize output length
 
-### 2. 系统状态接口
+### 2. System Status Interface
 **GET** `/api/status`
 
-获取系统运行状态和详细统计信息。
+Get system operation status and detailed statistics.
 
-#### 响应示例
+#### Response Example
 ```json
 {
   "success": true,
@@ -167,19 +167,19 @@ uvicorn API_KIT.api_server:app --host 0.0.0.0 --port 8000 --workers 4
 }
 ```
 
-### 3. 系统初始化接口
+### 3. System Initialization Interface
 **POST** `/api/setup`
 
-初始化系统或重建向量索引。
+Initialize system or rebuild vector index.
 
-#### 请求参数
+#### Request Parameters
 ```json
 {
   "force_rebuild": false
 }
 ```
 
-#### 响应示例
+#### Response Example
 ```json
 {
   "success": true,
@@ -195,108 +195,108 @@ uvicorn API_KIT.api_server:app --host 0.0.0.0 --port 8000 --workers 4
 }
 ```
 
-### 4. 健康检查接口
+### 4. Health Check Interface
 **GET** `/api/health`
 
-检查API服务是否正常运行。
+Check if API service is running normally.
 
-#### 响应示例
+#### Response Example
 ```json
 {
   "status": "ok"
 }
 ```
 
-## 🔧 配置说明
+## 🔧 Configuration Instructions
 
-### 服务器配置
+### Server Configuration
 ```python
-# api_server.py 中的配置
+# Configuration in api_server.py
 app = FastAPI(
-    title="政府工作报告RAG API",
-    description="为AI前端和自动化工具提供标准化接口",
+    title="Chinese Government Work Reports RAG API",
+    description="Provide standardized interfaces for AI frontends and automation tools",
     version="1.0.0"
 )
 
-# CORS配置
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # 允许所有来源
-    allow_credentials=True,       # 允许凭据
-    allow_methods=["*"],          # 允许所有方法
-    allow_headers=["*"],          # 允许所有头部
+    allow_origins=["*"],          # Allow all origins
+    allow_credentials=True,       # Allow credentials
+    allow_methods=["*"],          # Allow all methods
+    allow_headers=["*"],          # Allow all headers
 )
 ```
 
-### 端口配置
-- **默认端口**: 8000
-- **开发环境**: 支持热重载 (`--reload`)
-- **生产环境**: 多进程部署 (`--workers 4`)
+### Port Configuration
+- **Default Port**: 8000
+- **Development Environment**: Support hot reload (`--reload`)
+- **Production Environment**: Multi-process deployment (`--workers 4`)
 
-### Conda环境配置
+### Conda Environment Configuration
 ```bash
-# 推荐的conda环境配置
+# Recommended conda environment configuration
 conda create -n GovRag python=3.10
 conda activate GovRag
 
-# 安装CUDA支持（如果有GPU）
+# Install CUDA support (if GPU available)
 conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
 
-# 安装其他依赖
+# Install other dependencies
 pip install -r requirements_api.txt
 pip install -r ../requirements.txt
 ```
 
-## 🌍 内网穿透 (ngrok)
+## 🌍 Tunneling (ngrok)
 
-### 1. 安装ngrok（首次使用）
-⚠️ **重要**：由于GitHub文件大小限制，需要手动下载ngrok.exe
+### 1. Install ngrok (First Use)
+⚠️ **Important**: Due to GitHub file size limitations, need to manually download ngrok.exe
 
-请参考：**[INSTALL_NGROK.md](INSTALL_NGROK.md)** 完成ngrok安装配置
+Please refer to: **[INSTALL_NGROK.md](INSTALL_NGROK.md)** to complete ngrok installation and configuration
 
-### 2. 自动启动ngrok
+### 2. Auto-Start ngrok
 ```bash
-# 使用一键启动脚本
+# Use one-click startup script
 start_all.bat
 
-# 或单独启动ngrok
+# Or start ngrok separately
 start_ngrok.bat
 ```
 
-### 2. 手动配置ngrok
+### 2. Manual ngrok Configuration
 ```bash
-# 进入ngrok目录
+# Enter ngrok directory
 cd ngrok-v3-stable-windows-amd64
 
-# 添加authtoken (需要注册ngrok账号)
+# Add authtoken (need to register ngrok account)
 ngrok.exe authtoken YOUR_AUTHTOKEN
 
-# 启动内网穿透
+# Start tunneling
 ngrok.exe http 8000
 ```
 
-### 3. 获取公网地址
-ngrok启动后会显示公网地址，例如：
+### 3. Get Public Address
+After ngrok starts, it will display public address, for example:
 ```
 Forwarding    https://abc123.ngrok.io -> http://localhost:8000
 ```
 
-### 4. 外网访问
-- **API文档**: https://abc123.ngrok.io/docs
-- **查询接口**: https://abc123.ngrok.io/api/query
+### 4. External Access
+- **API Documentation**: https://abc123.ngrok.io/docs
+- **Query Interface**: https://abc123.ngrok.io/api/query
 
-## 💻 客户端调用示例
+## 💻 Client Call Examples
 
-### Python客户端
+### Python Client
 ```python
 import requests
 import json
 
-# API基础URL
+# API base URL
 BASE_URL = "http://localhost:8000"
 
 def query_government_report(query_text):
-    """查询政府工作报告"""
+    """Query government work reports"""
     url = f"{BASE_URL}/api/query"
     payload = {
         "query": query_text
@@ -306,13 +306,13 @@ def query_government_report(query_text):
     return response.json()
 
 def check_system_status():
-    """检查系统状态"""
+    """Check system status"""
     url = f"{BASE_URL}/api/status"
     response = requests.get(url)
     return response.json()
 
 def initialize_system(force_rebuild=False):
-    """初始化系统"""
+    """Initialize system"""
     url = f"{BASE_URL}/api/setup"
     payload = {
         "force_rebuild": force_rebuild
@@ -321,26 +321,26 @@ def initialize_system(force_rebuild=False):
     response = requests.post(url, json=payload)
     return response.json()
 
-# 使用示例
+# Usage example
 if __name__ == "__main__":
-    # 检查系统状态
+    # Check system status
     status = check_system_status()
-    print(f"系统状态: {status}")
+    print(f"System status: {status}")
     
-    # 如果系统未就绪，先初始化
+    # If system not ready, initialize first
     if not status.get("data", {}).get("is_ready", False):
-        print("正在初始化系统...")
+        print("Initializing system...")
         init_result = initialize_system()
-        print(f"初始化结果: {init_result}")
+        print(f"Initialization result: {init_result}")
     
-    # 查询示例
-    result = query_government_report("河南省2025年重点工作有哪些")
+    # Query example
+    result = query_government_report("What are Henan Province's key work for 2025")
     print(json.dumps(result, indent=2, ensure_ascii=False))
 ```
 
-### JavaScript客户端
+### JavaScript Client
 ```javascript
-// 查询政府工作报告
+// Query government work reports
 async function queryGovernmentReport(queryText) {
     const response = await fetch('http://localhost:8000/api/query', {
         method: 'POST',
@@ -355,13 +355,13 @@ async function queryGovernmentReport(queryText) {
     return await response.json();
 }
 
-// 检查系统状态
+// Check system status
 async function checkSystemStatus() {
     const response = await fetch('http://localhost:8000/api/status');
     return await response.json();
 }
 
-// 初始化系统
+// Initialize system
 async function initializeSystem(forceRebuild = false) {
     const response = await fetch('http://localhost:8000/api/setup', {
         method: 'POST',
@@ -376,67 +376,67 @@ async function initializeSystem(forceRebuild = false) {
     return await response.json();
 }
 
-// 使用示例
+// Usage example
 async function main() {
     try {
-        // 检查系统状态
+        // Check system status
         const status = await checkSystemStatus();
-        console.log('系统状态:', status);
+        console.log('System status:', status);
         
-        // 如果系统未就绪，先初始化
+        // If system not ready, initialize first
         if (!status.data?.is_ready) {
-            console.log('正在初始化系统...');
+            console.log('Initializing system...');
             const initResult = await initializeSystem();
-            console.log('初始化结果:', initResult);
+            console.log('Initialization result:', initResult);
         }
         
-        // 执行查询
-        const result = await queryGovernmentReport('河南省2025年重点工作有哪些');
-        console.log('查询结果:', result);
+        // Execute query
+        const result = await queryGovernmentReport('What are Henan Province key work for 2025');
+        console.log('Query result:', result);
     } catch (error) {
-        console.error('操作失败:', error);
+        console.error('Operation failed:', error);
     }
 }
 
 main();
 ```
 
-### cURL示例
+### cURL Examples
 ```bash
-# 检查系统状态
+# Check system status
 curl -X GET "http://localhost:8000/api/status"
 
-# 初始化系统
+# Initialize system
 curl -X POST "http://localhost:8000/api/setup" \
   -H "Content-Type: application/json" \
   -d '{"force_rebuild": false}'
 
-# 查询接口
+# Query interface
 curl -X POST "http://localhost:8000/api/query" \
   -H "Content-Type: application/json" \
-  -d '{"query": "河南省2025年重点工作有哪些"}'
+  -d '{"query": "What are Henan Province key work for 2025"}'
 
-# 健康检查
+# Health check
 curl -X GET "http://localhost:8000/api/health"
 ```
 
-## 🔒 安全配置
+## 🔒 Security Configuration
 
-### 1. 生产环境安全
+### 1. Production Environment Security
 ```python
-# 建议的生产环境配置
+# Recommended production environment configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://yourdomain.com"],  # 限制来源域名
+    allow_origins=["https://yourdomain.com"],  # Restrict origin domains
     allow_credentials=True,
-    allow_methods=["GET", "POST"],             # 限制HTTP方法
+    allow_methods=["GET", "POST"],             # Restrict HTTP methods
     allow_headers=["*"],
 )
 ```
 
-### 2. API密钥认证 (可选扩展)
+### 2. API Key Authentication (Optional Extension)
 ```python
-# 添加API密钥中间件
+# Add API key middleware
 @app.middleware("http")
 async def verify_api_key(request: Request, call_next):
     api_key = request.headers.get("X-API-Key")
@@ -449,9 +449,9 @@ async def verify_api_key(request: Request, call_next):
     return response
 ```
 
-### 3. 请求频率限制
+### 3. Request Rate Limiting
 ```python
-# 使用slowapi进行频率限制
+# Use slowapi for rate limiting
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 
@@ -459,16 +459,16 @@ limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 
 @app.post("/api/query")
-@limiter.limit("10/minute")  # 每分钟最多10次请求
+@limiter.limit("10/minute")  # Maximum 10 requests per minute
 async def query_api(request: Request, query_request: QueryRequest):
-    # ... 查询逻辑
+    # ... query logic
 ```
 
-## 📊 性能优化
+## 📊 Performance Optimization
 
-### 1. 服务器优化
+### 1. Server Optimization
 ```bash
-# 生产环境启动配置
+# Production environment startup configuration
 uvicorn API_KIT.api_server:app \
   --host 0.0.0.0 \
   --port 8000 \
@@ -478,78 +478,78 @@ uvicorn API_KIT.api_server:app \
   --max-requests-jitter 100
 ```
 
-### 2. 内存管理
-- RAG系统采用单例模式，避免重复初始化
-- 向量索引在内存中缓存，提高查询速度
-- 定期清理GPU内存缓存
-- 支持CUDA加速的Jina Embeddings v4模型
+### 2. Memory Management
+- RAG system uses singleton pattern, avoid repeated initialization
+- Vector index cached in memory, improve query speed
+- Regular GPU memory cache cleanup
+- Support CUDA-accelerated Jina Embeddings v4 model
 
-### 3. 并发处理
-- 支持多进程部署
-- 异步处理长时间查询
-- 连接池管理数据库连接
+### 3. Concurrent Processing
+- Support multi-process deployment
+- Asynchronous processing for long-running queries
+- Connection pool management for database connections
 
-### 4. 系统优化特性
-- **智能分层检索架构**: 根据查询类型自动选择最优策略
-- **上下文窗口最大化**: 支持100,000字符的大上下文处理
-- **相邻块聚合**: 确保信息连续性和完整性
-- **智能截断策略**: 保留高价值信息，优化输出长度
+### 4. System Optimization Features
+- **Intelligent Layered Retrieval Architecture**: Automatically select optimal strategy based on query type
+- **Context Window Maximization**: Support 100,000 character large context processing
+- **Adjacent Chunk Aggregation**: Ensure information continuity and completeness
+- **Intelligent Truncation Strategy**: Preserve high-value information, optimize output length
 
-## 🚨 错误处理
+## 🚨 Error Handling
 
-### 常见错误码
-- **400**: 请求参数错误
-- **401**: 认证失败 (如果启用了API密钥)
-- **500**: 服务器内部错误
-- **503**: 服务暂时不可用
+### Common Error Codes
+- **400**: Request parameter error
+- **401**: Authentication failed (if API key enabled)
+- **500**: Internal server error
+- **503**: Service temporarily unavailable
 
-### 错误响应格式
+### Error Response Format
 ```json
 {
   "success": false,
-  "error": "系统未就绪，请先初始化",
+  "error": "System not ready, please initialize first",
   "message": null,
   "data": null
 }
 ```
 
-## 🔧 故障排除
+## 🔧 Troubleshooting
 
-### 1. 服务启动失败
+### 1. Service Startup Failed
 ```bash
-# 检查端口占用
+# Check port usage
 netstat -ano | findstr :8000
 
-# 检查依赖安装
+# Check dependency installation
 pip list | grep fastapi
 
-# 检查主系统配置
-python -c "from main import GovernmentReportRAG; print('导入成功')"
+# Check main system configuration
+python -c "from main import GovernmentReportRAG; print('Import successful')"
 
-# 检查conda环境
+# Check conda environment
 conda info --envs
 conda activate GovRag
 ```
 
-### 2. 查询返回错误
-- 检查系统是否已初始化 (`/api/status`)
-- 确认配置文件正确设置
-- 检查API密钥是否有效
-- 查看服务器日志
-- 确认主系统依赖已安装
+### 2. Query Returns Error
+- Check if system is initialized (`/api/status`)
+- Confirm configuration file is set correctly
+- Check if API key is valid
+- View server logs
+- Confirm main system dependencies are installed
 
-### 3. 内网穿透问题
-- 确认ngrok authtoken已设置
-- 检查防火墙设置
-- 确认本地服务正常运行
-- 检查ngrok配置文件
+### 3. Tunneling Issues
+- Confirm ngrok authtoken is set
+- Check firewall settings
+- Confirm local service is running normally
+- Check ngrok configuration file
 
-### 4. 环境问题
+### 4. Environment Issues
 ```bash
-# 检查conda环境
+# Check conda environment
 conda list -n GovRag
 
-# 重新创建环境
+# Recreate environment
 conda remove -n GovRag --all
 conda create -n GovRag python=3.10
 conda activate GovRag
@@ -557,92 +557,92 @@ pip install -r requirements_api.txt
 pip install -r ../requirements.txt
 ```
 
-## 📝 开发指南
+## 📝 Development Guide
 
-### 1. 添加新接口
+### 1. Add New Interface
 ```python
 @app.post("/api/new-endpoint")
 async def new_endpoint(request: NewRequest):
     try:
-        # 处理逻辑
+        # Processing logic
         return {"success": True, "data": result}
     except Exception as e:
         return {"success": False, "error": str(e)}
 ```
 
-### 2. 修改数据模型
+### 2. Modify Data Models
 ```python
-# 在api_models.py中添加新模型
+# Add new model in api_models.py
 class NewRequest(BaseModel):
     parameter: str
     options: Optional[Dict] = None
 ```
 
-### 3. 中间件开发
+### 3. Middleware Development
 ```python
 @app.middleware("http")
 async def custom_middleware(request: Request, call_next):
-    # 请求前处理
+    # Pre-request processing
     response = await call_next(request)
-    # 响应后处理
+    # Post-response processing
     return response
 ```
 
-## 📋 部署清单
+## 📋 Deployment Checklist
 
-### 开发环境
-- [ ] 安装Python 3.10+
-- [ ] 创建conda环境（GovRag）
-- [ ] 安装依赖包
-- [ ] 配置config.py
-- [ ] 启动API服务
-- [ ] 测试接口功能
+### Development Environment
+- [ ] Install Python 3.10+
+- [ ] Create conda environment (GovRag)
+- [ ] Install dependency packages
+- [ ] Configure config.py
+- [ ] Start API service
+- [ ] Test interface functionality
 
-### 生产环境
-- [ ] 配置反向代理 (Nginx)
-- [ ] 设置HTTPS证书
-- [ ] 配置防火墙规则
-- [ ] 设置系统服务
-- [ ] 配置日志轮转
-- [ ] 设置监控告警
+### Production Environment
+- [ ] Configure reverse proxy (Nginx)
+- [ ] Set up HTTPS certificates
+- [ ] Configure firewall rules
+- [ ] Set up system services
+- [ ] Configure log rotation
+- [ ] Set up monitoring alerts
 
-## 🤝 贡献指南
+## 🤝 Contribution Guide
 
-1. Fork项目
-2. 创建功能分支
-3. 提交变更
-4. 推送到分支
-5. 创建Pull Request
+1. Fork project
+2. Create feature branch
+3. Submit changes
+4. Push to branch
+5. Create Pull Request
 
-## 📄 许可证
+## 📄 License
 
-本项目遵循项目根目录的LICENSE文件。
+This project follows the LICENSE file in the project root directory.
 
-## 🆘 技术支持
+## 🆘 Technical Support
 
-如有问题，请：
-1. 查看本README文档
-2. 检查API文档 (http://localhost:8000/docs)
-3. 查看项目主README
-4. 查看 `logs/government_rag.log` 日志文件
-5. 参考 `OPTIMIZATION_SUMMARY.md` 优化报告
-6. 提交Issue到项目仓库
+For questions, please:
+1. Check this README documentation
+2. Check API documentation (http://localhost:8000/docs)
+3. Check project main README
+4. Check `logs/government_rag.log` log files
+5. Refer to `OPTIMIZATION_SUMMARY.md` optimization report
+6. Submit Issues to project repository
 
-## 📈 性能指标
+## 📈 Performance Metrics
 
-### 系统优化成果
-- **平均信息量提升**: 100.0%
-- **平均检索量提升**: 100.0% 
-- **上下文容量提升**: 337.8%
-- **API输出能力提升**: 60.0%
+### System Optimization Results
+- **Average Information Volume Increase**: 100.0%
+- **Average Retrieval Volume Increase**: 100.0% 
+- **Context Capacity Increase**: 337.8%
+- **API Output Capability Increase**: 60.0%
 
-### 检索能力提升
-- **单省份查询**: 从10个块提升到30个块（+200%）
-- **多省份查询**: 从6个块提升到15个块（+150%）
-- **对比查询**: 从8个块提升到25个块（+213%）
-- **通用检索**: 从20个块提升到60个块（+200%）
+### Retrieval Capability Enhancement
+- **Single Province Query**: From 10 to 30 chunks (+200%)
+- **Multi-Province Query**: From 6 to 15 chunks (+150%)
+- **Comparison Query**: From 8 to 25 chunks (+213%)
+- **General Retrieval**: From 20 to 60 chunks (+200%)
 
 ---
 
-**最后更新**: 2025年07月
-**版本**: 1.0.0 
+**Last Updated**: July 2025
+**Version**: 1.0.0 
