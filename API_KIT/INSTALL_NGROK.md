@@ -1,111 +1,111 @@
-# 🌐 ngrok 安装配置指南
+# 🌐 ngrok Installation & Configuration Guide
 
-## 📋 说明
+## 📋 Overview
 
-由于GitHub对单个文件大小的限制（25MB），`ngrok.exe`文件无法直接包含在仓库中。请按照以下步骤手动下载和配置ngrok。
+Due to GitHub's file size limitations (25MB), the `ngrok.exe` file cannot be directly included in the repository. Please follow these steps to manually download and configure ngrok.
 
-## 📥 下载ngrok
+## 📥 Download ngrok
 
-### 方式1：官方下载（推荐）
-1. 访问 [ngrok官网](https://ngrok.com/download)
-2. 选择Windows版本下载
-3. 解压后将`ngrok.exe`文件放入`API_KIT/ngrok-v3-stable-windows-amd64/`目录
+### Method 1: Official Download (Recommended)
+1. Visit [ngrok official website](https://ngrok.com/download)
+2. Select Windows version for download
+3. After extraction, place `ngrok.exe` file in `API_KIT/ngrok-v3-stable-windows-amd64/` directory
 
-### 方式2：直接下载链接
+### Method 2: Direct Download Link
 ```bash
-# 下载Windows版本
+# Download Windows version
 curl -o ngrok.zip https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip
 
-# 解压到指定目录
+# Extract to specified directory
 unzip ngrok.zip -d API_KIT/ngrok-v3-stable-windows-amd64/
 ```
 
-## 🔧 配置ngrok
+## 🔧 Configure ngrok
 
-### 1. 注册ngrok账号
-1. 访问 [ngrok官网](https://ngrok.com/)
-2. 注册免费账号
-3. 获取您的authtoken
+### 1. Register ngrok Account
+1. Visit [ngrok official website](https://ngrok.com/)
+2. Register a free account
+3. Get your authtoken
 
-### 2. 配置authtoken
+### 2. Configure authtoken
 ```bash
-# 进入ngrok目录
+# Enter ngrok directory
 cd API_KIT/ngrok-v3-stable-windows-amd64
 
-# 配置authtoken（替换为您的实际token）
+# Configure authtoken (replace with your actual token)
 ngrok.exe authtoken YOUR_AUTHTOKEN_HERE
 ```
 
-### 3. 测试ngrok
+### 3. Test ngrok
 ```bash
-# 测试ngrok是否正常工作
+# Test if ngrok works properly
 ngrok.exe http 8000
 ```
 
-## 🚀 使用方式
+## 🚀 Usage
 
-配置完成后，您可以：
+After configuration is complete, you can:
 
-### 自动启动（推荐）
+### Auto Start (Recommended)
 ```bash
-# 使用一键启动脚本
+# Use one-click startup script
 start_all.bat
 ```
 
-### 手动启动
+### Manual Start
 ```bash
-# 单独启动ngrok
+# Start ngrok separately
 start_ngrok.bat
 
-# 或直接使用命令
+# Or use direct command
 cd API_KIT/ngrok-v3-stable-windows-amd64
 ngrok.exe http 8000
 ```
 
-## 📁 目录结构
+## 📁 Directory Structure
 
-配置完成后，目录结构应该如下：
+After configuration, the directory structure should look like:
 ```
 API_KIT/
 └── ngrok-v3-stable-windows-amd64/
-    ├── ngrok.exe          # 您下载的ngrok可执行文件
-    └── .ngrok2/           # ngrok配置目录（自动生成）
-        └── ngrok.yml      # ngrok配置文件
+    ├── ngrok.exe          # Your downloaded ngrok executable
+    └── .ngrok2/           # ngrok configuration directory (auto-generated)
+        └── ngrok.yml      # ngrok configuration file
 ```
 
-## 🔒 安全说明
+## 🔒 Security Notes
 
-- **authtoken保护**：请妥善保管您的authtoken，不要在公共代码中暴露
-- **免费限制**：ngrok免费版有连接数和带宽限制
-- **HTTPS支持**：ngrok提供免费的HTTPS隧道
+- **authtoken Protection**: Please keep your authtoken secure, don't expose it in public code
+- **Free Limitations**: ngrok free version has connection and bandwidth limitations
+- **HTTPS Support**: ngrok provides free HTTPS tunnels
 
-## 🆘 故障排除
+## 🆘 Troubleshooting
 
-### 常见问题
+### Common Issues
 
-1. **ngrok.exe不存在**
-   - 确认已下载ngrok.exe到正确目录
-   - 检查文件权限是否正确
+1. **ngrok.exe doesn't exist**
+   - Confirm ngrok.exe is downloaded to correct directory
+   - Check file permissions are correct
 
-2. **authtoken未配置**
-   - 运行`ngrok.exe authtoken YOUR_TOKEN`配置
-   - 检查`~/.ngrok2/ngrok.yml`文件是否存在
+2. **authtoken not configured**
+   - Run `ngrok.exe authtoken YOUR_TOKEN` to configure
+   - Check if `~/.ngrok2/ngrok.yml` file exists
 
-3. **端口冲突**
-   - 确认API服务运行在8000端口
-   - 可以修改为其他端口：`ngrok.exe http 其他端口`
+3. **Port conflicts**
+   - Confirm API service is running on port 8000
+   - Can modify to other port: `ngrok.exe http other_port`
 
-4. **网络连接问题**
-   - 检查防火墙设置
-   - 确认网络连接正常
+4. **Network connection issues**
+   - Check firewall settings
+   - Confirm network connection is normal
 
-### 获取帮助
+### Get Help
 
-如果遇到问题，请：
-1. 查看ngrok官方文档
-2. 检查API_KIT/README.md中的详细说明
-3. 在项目中提交Issue
+If you encounter issues, please:
+1. Check ngrok official documentation
+2. Check detailed instructions in API_KIT/README.md
+3. Submit Issues in the project
 
 ---
 
-**注意**：这是一个一次性配置，配置完成后可以正常使用所有API_KIT功能。 
+**Note**: This is a one-time configuration. After completion, you can use all API_KIT features normally. 
